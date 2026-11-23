@@ -26,4 +26,4 @@ jobs:
 
       - name: Executar testes unitários com Pytest
         run: |
-          pytest -v
+          PYTHONPATH=. pytest -v
