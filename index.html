@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>TechFlow Solutions - Gestão Ágil Logística</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 850px; margin: 30px auto; background: #f4f6f9; color: #222; }
+        h1 { color: #0f4c81; }
+        .card { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .badge-Critica, .badge-Crítica { background: #d93025; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .badge-Normal { background: #1a73e8; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .badge-Baixa { background: #5f6368; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        button { cursor: pointer; padding: 6px 12px; border: none; border-radius: 4px; }
+        .btn-add { background: #188038; color: white; }
+        .btn-next { background: #1a73e8; color: white; }
+        .btn-del { background: #d93025; color: white; }
+    </style>
+</head>
+<body>
+    <h1>TechFlow Solutions — Painel de Tarefas Ágeis</h1>
+
+    <div class="card">
+        <h3>Nova Tarefa</h3>
+        <form action="/adicionar" method="POST">
+            <input type="text" name="titulo" placeholder="Descrição da tarefa logística..." required style="width: 55%; padding: 6px;">
+            <select name="prioridade" style="padding: 6px;">
+                <option value="Baixa">Baixa</option>
+                <option value="Normal" selected>Normal</option>
+                <option value="Crítica">Crítica</option>
+            </select>
+            <button type="submit" class="btn-add">Adicionar</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <form action="/" method="GET">
+            <label><strong>Filtrar por Prioridade (Escopo Adicional):</strong></label>
+            <select name="prioridade" onchange="this.form.submit()" style="padding: 5px;">
+                <option value="Todas" {% if filtro_atual == 'Todas' %}selected{% endif %}>Todas</option>
+                <option value="Crítica" {% if filtro_atual == 'Crítica' %}selected{% endif %}>Crítica</option>
+                <option value="Normal" {% if filtro_atual == 'Normal' %}selected{% endif %}>Normal</option>
+                <option value="Baixa" {% if filtro_atual == 'Baixa' %}selected{% endif %}>Baixa</option>
+            </select>
+        </form>
+    </div>
+
+    {% for t in tarefas %}
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <strong>#{{ t.id }} - {{ t.titulo }}</strong>
+            <span class="badge-{{ t.prioridade }}">{{ t.prioridade }}</span>
+            <p style="margin: 5px 0 0; font-size: 14px;">Status: <strong>{{ t.status }}</strong></p>
+        </div>
+        <div style="display: flex; gap: 6px;">
+            {% if t.status != 'Concluído' %}
+            <form action="/avancar/{{ t.id }}" method="POST">
+                <button type="submit" class="btn-next">Avançar Etapa</button>
+            </form>
+            {% endif %}
+            <form action="/excluir/{{ t.id }}" method="POST">
+                <button type="submit" class="btn-del">Excluir</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>
